@@ -1,4 +1,4 @@
 <resources>
-<style name="AppTheme" parent="android:style/Theme.Material.NoActionBar"><item name="android:fontFamily">sans</item><item name="android:colorAccent">#65E2B1</item><item name="android:windowBackground">#111820</item><item name="android:statusBarColor">#111820</item><item name="android:navigationBarColor">#111820</item></style>
+<style name="AppTheme" parent="android:style/Theme.Material.NoActionBar"><item name="android:fontFamily">sans</item><item name="android:colorAccent">#A7F3D0</item><item name="android:windowBackground">#0B111C</item><item name="android:statusBarColor">#0B111C</item><item name="android:navigationBarColor">#0B111C</item></style>
 <string name="service_description">Выполняет касания только после запуска пользователем. Не читает содержимое окон и не отправляет данные в интернет.</string>
 </resources>
