@@ -29,15 +29,33 @@ jobs:
             exit 1
           fi
           umask 077
-          mkdir -p "$HOME/.android"
-          printf '%s' "$AUTOCLICK_SIGNING_KEY" | base64 --decode > "$HOME/.android/debug.keystore"
-          keytool -list -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey >/dev/null
-      - run: gradle assembleDebug --no-daemon --stacktrace
+          key_path="$RUNNER_TEMP/autoclickx-signing.keystore"
+          printf '%s' "$AUTOCLICK_SIGNING_KEY" | base64 --decode > "$key_path"
+          keytool -list -keystore "$key_path" -storepass android -alias androiddebugkey >/dev/null
+          expected=$(keytool -exportcert -keystore "$key_path" -storepass android -alias androiddebugkey | sha256sum | cut -d' ' -f1)
+          echo "AUTOCLICK_KEYSTORE_PATH=$key_path" >> "$GITHUB_ENV"
+          echo "AUTOCLICK_EXPECTED_CERT=$expected" >> "$GITHUB_ENV"
+          echo "Persistent certificate SHA-256: $expected"
+          if [ "$expected" != "9e243cbca746446e906f805b3f2adc220bbad71305de7fb333233ca84d50a3da" ]; then
+            echo "::warning::The saved key is not the certificate of v0.3. Updates over v0.3 may require reinstall."
+          fi
+      - run: gradle :app:clean :app:assembleDebug --no-daemon --no-build-cache --stacktrace
       - name: Verify APK signature
         run: |
-          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --print-certs app/build/outputs/apk/debug/app-debug.apk
+          set -euo pipefail
+          result=$("$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --print-certs app/build/outputs/apk/debug/app-debug.apk)
+          printf '%s\n' "$result"
+          actual=$(printf '%s\n' "$result" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p')
+          if [ "$actual" != "$AUTOCLICK_EXPECTED_CERT" ]; then
+            echo "::error::APK certificate differs from the persistent signing key."
+            exit 1
+          fi
+          echo "Persistent signing certificate verified."
       - uses: actions/upload-artifact@v4
         with:
           name: AutoClickX-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+      - name: Remove temporary signing key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/autoclickx-signing.keystore"
