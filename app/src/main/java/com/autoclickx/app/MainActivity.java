@@ -25,7 +25,7 @@ public class MainActivity extends Activity {
  private void full(LinearLayout parent,Button b){parent.addView(b,new LinearLayout.LayoutParams(-1,dp(52)));}
  @Override public void onCreate(Bundle state){super.onCreate(state);getWindow().setStatusBarColor(BG);getWindow().setNavigationBarColor(BG);getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
   ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);scroll.setBackgroundColor(BG);LinearLayout root=new LinearLayout(this);root.setOrientation(1);root.setPadding(dp(20),dp(26),dp(20),dp(28));scroll.addView(root);setContentView(scroll);
-  root.addView(text("AUTOCLICK  /  X",12,MINT,true));space(root,8);root.addView(text("Твои касания.\nТвой ритм.",32,FG,true));space(root,8);root.addView(text("Автоматизация экрана  •  v0.2",14,MUTED,false));space(root,22);
+  root.addView(text("AUTOCLICK  /  X",12,MINT,true));space(root,8);root.addView(text("Твои касания.\nТвой ритм.",32,FG,true));space(root,8);root.addView(text("Автоматизация экрана  •  v0.3",14,MUTED,false));space(root,22);
   LinearLayout access=card(root);status=text("",17,MINT,true);access.addView(status);space(access,8);access.addView(text("Для касаний требуется служба специальных возможностей.",14,MUTED,false));space(access,14);
   Button enable=button("Настроить доступ",0xff28384d,FG);full(access,enable);enable.setOnClickListener(v->startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)));
   space(root,14);LinearLayout settings=card(root);settings.addView(text("Интервал нажатий",19,FG,true));space(settings,10);
